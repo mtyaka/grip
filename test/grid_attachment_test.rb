@@ -29,10 +29,6 @@ class TestContent< Test::Unit::TestCase
         @from_collection = Foo.first
       end
 
-      should "be a Foo" do
-       
-      end
-
       should "have correct mime type" do
        
         assert_equal("image/png", @from_collection.image.content_type)
