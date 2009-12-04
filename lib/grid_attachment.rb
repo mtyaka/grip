@@ -51,7 +51,6 @@ module GridAttachment
   module ClassMethods
     
     def has_grid_attachment name
-      raise GridAttachmentNamingError, "#{self.to_s} does not respond to #{name}_path!" unless self.column_names.include? "#{name}_path"
       include InstanceMethods
       
       # thanks to thoughtbot's paperclip!
@@ -68,14 +67,15 @@ module GridAttachment
       define_method "#{name}=" do |file|
         self.class.attachment_definitions[name] = file
       end
+      
+      key "#{name}_path".to_sym, String
+      
     end
     
     def attachment_definitions
       read_inheritable_attribute(:attachment_definitions)
     end
-    
-    class GridAttachmentNamingError < StandardError #:nodoc: 
-    end
+
   end
   
   def self.included(base)

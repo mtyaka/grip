@@ -5,8 +5,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../lib/grid_attachment')
 class Foo
   include MongoMapper::Document
   include GridAttachment
-  key :image_path, String
-  key :pdf_path, String
+
   has_grid_attachment :image
   has_grid_attachment :pdf
 end
@@ -27,9 +26,12 @@ class TestContent< Test::Unit::TestCase
       end
 
       should "have correct mime type" do
-       
         assert_equal("image/png", @from_collection.image.content_type)
         assert_equal("application/pdf", @from_collection.pdf.content_type)
+      end
+      
+      should "respond to the dynamic keys" do
+        [:pdf_path,:image_path].each {|k| assert @document.respond_to? k  }
       end
 
       should "have the correct paths" do
