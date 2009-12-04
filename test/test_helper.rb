@@ -11,9 +11,8 @@ MONGO_DB = MongoMapper.database
 class ActiveSupport::TestCase
   # Drop all columns after each test case.
   def teardown
-    MongoMapper.database.collections.each do |coll|
-      coll.remove  
-    end
+    MongoMapper.connection.drop_database "test-attachments"
+    MongoMapper.database = "test-attachments"
   end
 
   # Make sure that each test case has a teardown

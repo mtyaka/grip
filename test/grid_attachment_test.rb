@@ -18,15 +18,25 @@ class TestContent< Test::Unit::TestCase
     
     context "with an attachment" do
       setup do
+        
         @image = File.open("#{File.dirname(__FILE__)}/cthulhu.png",'r')
         @pdf   = File.open("#{File.dirname(__FILE__)}/sample.pdf",'r')
 
         @document = Foo.create(:image=>@image,:pdf=>@pdf)
+        @document.image = @image
+        @document.save
+        
+        @from_collection = Foo.first
+      end
+
+      should "be a Foo" do
+       
       end
 
       should "have correct mime type" do
-        assert_equal("image/png", @document.image.content_type)
-        assert_equal("application/pdf", @document.pdf.content_type)
+       
+        assert_equal("image/png", @from_collection.image.content_type)
+        assert_equal("application/pdf", @from_collection.pdf.content_type)
       end
 
       should "have the correct paths" do
