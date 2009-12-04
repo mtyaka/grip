@@ -5,7 +5,6 @@ GridFS Attachment mixin for MongoMapper
 
 **Usage**
 
-`
   MONGO_DB = MongoMapper.database
 
   class Foo
@@ -16,4 +15,3 @@ GridFS Attachment mixin for MongoMapper
     has_grid_attachment :image
     has_grid_attachment :pdf
   end
-`
