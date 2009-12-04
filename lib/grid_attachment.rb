@@ -1,14 +1,3 @@
-# Usage
-# define MONGO_DB = MongoMapper.database
-#
-# class Foo
-#   include MongoMapper::Document
-#   include GridAttachment
-#   key :image_path, String
-#   key :pdf_path, String
-#   has_grid_attachment :image
-#   has_grid_attachment :pdf
-# end
 include Mongo
 include GridFS
 module GridAttachment
@@ -26,7 +15,7 @@ module GridAttachment
         if file.is_a? File
           path = file_save_path(name,file.path.split("/").last)
           
-          GridStore.open(MONGO_DB, path, 'w') do |f|
+          GridStore.open(self.class.database, path, 'w') do |f|
             f.content_type = MIME::Types.type_for(file.path).first.content_type
             f.puts file.read
           end
@@ -39,12 +28,12 @@ module GridAttachment
     
     def destroy_attached_files
       self.class.attachment_definitions.each do |name, attachment|
-        GridStore.unlink(MONGO_DB, send("#{name}_path"))
+        GridStore.unlink(self.class.database, send("#{name}_path"))
       end
     end
     
     def file_from_grid name
-      GridStore.open(MONGO_DB, send("#{name}_path"), 'r') {|f| f }
+      GridStore.open(self.class.database, send("#{name}_path"), 'r') {|f| f }
     end
 
   end

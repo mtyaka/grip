@@ -3,11 +3,7 @@ GridAttachment
 
 GridFS Attachment mixin for MongoMapper
 
-**Usage**
-
-    #define this somewhere
-    MONGO_DB = MongoMapper.database
-
+**Sample Class**
 
     class Foo
       include MongoMapper::Document
