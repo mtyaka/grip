@@ -23,9 +23,6 @@ class TestContent< Test::Unit::TestCase
         @pdf   = File.open("#{File.dirname(__FILE__)}/sample.pdf",'r')
 
         @document = Foo.create(:image=>@image,:pdf=>@pdf)
-        @document.image = @image
-        @document.save
-        
         @from_collection = Foo.first
       end
 
