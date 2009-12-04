@@ -1,10 +1,10 @@
 require "test_helper"
-require File.expand_path(File.dirname(__FILE__) + '/../lib/grid_attachment')
+require File.expand_path(File.dirname(__FILE__) + '/../lib/grip')
 
 
 class Foo
   include MongoMapper::Document
-  include GridAttachment
+  include Grip
 
   has_grid_attachment :image
   has_grid_attachment :pdf

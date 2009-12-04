@@ -1,4 +1,4 @@
-GridAttachment
+Grip
 ==============
 
 GridFS Attachment mixin for MongoMapper
@@ -7,7 +7,7 @@ GridFS Attachment mixin for MongoMapper
 
     class Foo
       include MongoMapper::Document
-      include GridAttachment
+      include Grip
       
       has_grid_attachment :image
       has_grid_attachment :pdf

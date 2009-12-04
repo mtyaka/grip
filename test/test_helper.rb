@@ -4,7 +4,7 @@
 
 MongoMapper.database = "test-attachments"
 
-# For GridAttachment
+# For Grip
 MONGO_DB = MongoMapper.database
 
 
