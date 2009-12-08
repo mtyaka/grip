@@ -12,11 +12,15 @@ module Grip
     def save_attachments
       self.class.attachment_definitions.each do |attachment|
         name, file = attachment
-        if file.is_a? File
-          path = file_save_path(name,file.path.split("/").last)
+        if (file.is_a?(File) || file.is_a?(Tempfile))
+          file_path = file.original_filename rescue file.path.split("/").last
           
+          path = file_save_path(name,file_path)
           GridStore.open(self.class.database, path, 'w') do |f|
-            f.content_type = MIME::Types.type_for(file.path).first.content_type
+            
+            content_type = file.content_type rescue MIME::Types.type_for(file.path).first.content_type
+            
+            f.content_type = content_type
             f.puts file.read
           end
           
@@ -58,7 +62,6 @@ module Grip
       end
       
       key "#{name}_path".to_sym, String
-      
     end
     
     def attachment_definitions
