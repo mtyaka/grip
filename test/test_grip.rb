@@ -5,7 +5,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../lib/grip')
 class Foo
   include MongoMapper::Document
   include Grip
-
+  key :name, String
   has_grid_attachment :image
   has_grid_attachment :pdf
 end
@@ -22,9 +22,20 @@ class TestContent< Test::Unit::TestCase
         @pdf   = File.open("#{File.dirname(__FILE__)}/sample.pdf",'r')
 
         @document = Foo.create(:image=>@image,:pdf=>@pdf)
+        
+        
+        params = {}
+        params[:pdf] = ""
+        params[:image] = ""
+        
+        @document.update_attributes(params)
         @from_collection = Foo.first
       end
 
+      should "have after_save callback" do
+        puts Foo.after_save.collect(&:method).inspect
+      end
+      
       should "have correct mime type" do
         assert_equal("image/png", @from_collection.image.content_type)
         assert_equal("application/pdf", @from_collection.pdf.content_type)
