@@ -17,18 +17,10 @@ class TestContent< Test::Unit::TestCase
     
     context "with an attachment" do
       setup do
-        
         @image = File.open("#{File.dirname(__FILE__)}/cthulhu.png",'r')
         @pdf   = File.open("#{File.dirname(__FILE__)}/sample.pdf",'r')
 
         @document = Foo.create(:image=>@image,:pdf=>@pdf)
-        
-        
-        params = {}
-        params[:pdf] = ""
-        params[:image] = ""
-        
-        @document.update_attributes(params)
         @from_collection = Foo.first
       end
 
