@@ -24,8 +24,9 @@ class TestContent< Test::Unit::TestCase
         @from_collection = Foo.first
       end
 
-      should "have after_save callback" do
-        puts Foo.after_save.collect(&:method).inspect
+      should "only define callbacks once" do
+        assert_equal(1, Foo.after_save.collect(&:method).count)
+        assert_equal(1, Foo.before_destroy.collect(&:method).count)
       end
       
       should "have correct mime type" do
