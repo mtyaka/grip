@@ -11,7 +11,7 @@ begin
     g.description = %(GridFS attachments for MongoMapper)
     g.email = 'signalstatic@gmail.com'
     g.homepage = 'http://github.com/twoism/grip'
-    g.authors = %w(twoism)
+    g.authors = %w(twoism jnunemaker)
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
