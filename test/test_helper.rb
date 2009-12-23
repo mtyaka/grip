@@ -1,25 +1,23 @@
-%w{rubygems mongomapper shoulda mongo/gridfs mime/types}.each {|f| require f}
+require 'test/unit'
+require 'pp'
 
+require 'mongo_mapper'
 
+require File.expand_path(File.dirname(__FILE__) + '/../lib/grip')
 
 MongoMapper.database = "test-attachments"
 
-# For Grip
-MONGO_DB = MongoMapper.database
-
-
-class ActiveSupport::TestCase
-  # Drop all columns after each test case.
-  def teardown
-    MongoMapper.connection.drop_database "test-attachments"
-    MongoMapper.database = "test-attachments"
-  end
-
-  # Make sure that each test case has a teardown
-  # method to clear the db after each test.
-  def inherited(base)
-    base.define_method teardown do 
-      super
+class Test::Unit::TestCase
+  def self.test(name, &block)
+    test_name = "test_#{name.gsub(/\s+/,'_')}".to_sym
+    defined = instance_method(test_name) rescue false
+    raise "#{test_name} is already defined in #{self}" if defined
+    if block_given?
+      define_method(test_name, &block)
+    else
+      define_method(test_name) do
+        flunk "No implementation provided for #{name}"
+      end
     end
   end
 end
