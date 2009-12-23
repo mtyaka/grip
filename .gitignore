@@ -1,9 +1,2 @@
-.DS_Store
-**/.DS_Store
-db/mongo*
-log/*
-tmp/*
-tmp/**/*
-config/database.yml
-coverage/*
-coverage/**/*
+*.gem
+pkg/*

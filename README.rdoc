@@ -1,0 +1,18 @@
+Grip
+==============
+
+GridFS Attachment gem for MongoMapper
+
+**Sample Class**
+
+    class Foo
+      include MongoMapper::Document
+      include Grip
+      
+      has_grid_attachment :image
+      has_grid_attachment :pdf
+    end
+    
+    @image = File.open("#{File.dirname(__FILE__)}/test/cthulhu.png",'r')
+    @pdf   = File.open("#{File.dirname(__FILE__)}/sample.pdf",'r')
+    @foo   = Foo.create(:img=>@image,:pdf=>@pdf)
