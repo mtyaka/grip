@@ -4,7 +4,7 @@ class Foo
   include MongoMapper::Document
   include Grip
   
-  has_grid_attachment :image
+  has_grid_attachment :image, :resize => {:width=>50,:height=>50}
   has_grid_attachment :pdf
 end
 
@@ -59,11 +59,8 @@ class GripTest < Test::Unit::TestCase
   end
   
   test "saves attachments correctly" do
-    # can't get these to pass locally but the 
-    # files are there and working. WTF??
-    
-    #assert_equal @image.read, @doc.image
-    #assert_equal @pdf.read,   @doc.pdf
+    assert_equal "image/png",       @doc.image.content_type
+    assert_equal "application/pdf", @doc.pdf.content_type
     
     assert GridFS::GridStore.exist?(MongoMapper.database, @doc.image_path)
     assert GridFS::GridStore.exist?(MongoMapper.database, @doc.pdf_path)

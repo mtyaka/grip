@@ -27,9 +27,9 @@ module Grip
   end
   
   module ClassMethods
-    def has_grid_attachment(name)
+    def has_grid_attachment(name,opts={})
       write_inheritable_attribute(:attachment_definitions, {}) if attachment_definitions.nil?
-      attachment_definitions[name] = {}
+      attachment_definitions[name] = opts
       
       key "#{name}_size".to_sym, Integer
       key "#{name}_path".to_sym, String
@@ -40,7 +40,7 @@ module Grip
         # open returns the correct mime-type, 
         # read returns a string. Not sure if 
         # this is a GridFS problem or not
-        GridFS::GridStore.open(self.class.database, self["#{name}_path"], 'r') {|f| f.read }
+        GridFS::GridStore.open(self.class.database, self["#{name}_path"], 'r') {|f| f }
       end
       
       define_method("#{name}=") do |file|
@@ -49,7 +49,7 @@ module Grip
         self["#{name}_name"]         = File.basename(file.path)
         self["#{name}_path"]         = "#{self.class.to_s.underscore}/#{name}/#{_id}"
         self["#{name}_content_type"] = file.content_type rescue MIME::Types.type_for(self["#{name}_name"]).to_s
-        self.class.attachment_definitions[name] = file
+        self.class.attachment_definitions[name][:file] = file
       end
     end
     
@@ -60,14 +60,19 @@ module Grip
   
   def save_attachments
     self.class.attachment_definitions.each do |attachment|
-      name, file = attachment
       
-      if (file.is_a?(File) || file.is_a?(Tempfile))
+      name, opts = attachment
+
+      if (opts[:file].is_a?(File) || opts[:file].is_a?(Tempfile))
         GridFS::GridStore.open(self.class.database, self["#{name}_path"], 'w', :content_type => self["#{name}_content_type"]) do |f|
-          f.write(file.read)
+          f.write( grip_process_file(opts))
         end
       end
     end
+  end
+  
+  def grip_process_file opts
+    opts[:file]
   end
   
   def destroy_attached_files
