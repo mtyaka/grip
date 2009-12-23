@@ -20,6 +20,10 @@ require 'tempfile'
 module Grip
   def self.included(base)
     base.extend Grip::ClassMethods
+    base.class_eval do
+      after_save :save_attachments
+      before_destroy :destroy_attached_files
+    end
   end
   
   module ClassMethods
@@ -27,16 +31,16 @@ module Grip
       write_inheritable_attribute(:attachment_definitions, {}) if attachment_definitions.nil?
       attachment_definitions[name] = {}
       
-      after_save :save_attachments
-      before_destroy :destroy_attached_files
-      
       key "#{name}_size".to_sym, Integer
       key "#{name}_path".to_sym, String
       key "#{name}_name".to_sym, String
       key "#{name}_content_type".to_sym, String
       
       define_method(name) do
-        GridFS::GridStore.read(self.class.database, self["#{name}_path"])
+        # open returns the correct mime-type, 
+        # read returns a string. Not sure if 
+        # this is a GridFS problem or not
+        GridFS::GridStore.open(self.class.database, self["#{name}_path"], 'r') {|f| f.read }
       end
       
       define_method("#{name}=") do |file|
