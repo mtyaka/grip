@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{grip}
-  s.version = "0.3.0"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["twoism"]
@@ -19,9 +19,13 @@ Gem::Specification.new do |s|
   s.files = [
     ".gitignore",
      "LICENSE",
+     "README.rdoc",
+     "Rakefile",
+     "VERSION",
+     "grip.gemspec",
      "lib/grip.rb",
-     "test/cthulhu.png",
-     "test/sample.pdf",
+     "test/fixtures/cthulhu.png",
+     "test/fixtures/sample.pdf",
      "test/test_grip.rb",
      "test/test_helper.rb"
   ]

@@ -14,11 +14,17 @@ The grip gem is hosted on gemcutter.org:
     class Foo
       include MongoMapper::Document
       include Grip
-      
+
       has_grid_attachment :image
       has_grid_attachment :pdf
     end
-    
-    @image = File.open("#{File.dirname(__FILE__)}/test/cthulhu.png",'r')
-    @pdf   = File.open("#{File.dirname(__FILE__)}/sample.pdf",'r')
-    @foo   = Foo.create(:img=>@image,:pdf=>@pdf)
+
+    image = File.open('foo.png', 'r')
+    pdf = File.open('foo.pdf', 'r')
+    foo = Foo.create(:image => image, :pdf => pdf)
+
+    foo.image # contents read from gridfs for serving from rack/metal/controller
+    foo.image_name # foo.jpg
+    foo.image_content_type # image/png
+    foo.image_size # File.size of the file
+    foo.image_path # path in grid fs foo/image/:id where :id is foo.id
