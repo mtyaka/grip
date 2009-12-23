@@ -15,8 +15,16 @@ The grip gem is hosted on gemcutter.org:
       include MongoMapper::Document
       include Grip
 
-      has_grid_attachment :image
+      has_grid_attachment :image, :resize => {:width=>50,:height=>50}
       has_grid_attachment :pdf
+      
+      # Hook for resizing or whatever gets you there.
+      # any specified options are passed back to you
+      # at this point. 
+      # Just return the file when you're done.
+      def grip_process_file opts
+        opts[:file]
+      end
     end
 
     image = File.open('foo.png', 'r')
