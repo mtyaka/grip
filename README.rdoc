@@ -1,9 +1,15 @@
-Grip
-==============
+= grip
 
-GridFS Attachment gem for MongoMapper
+GridFS attachments for MongoMapper
 
-**Sample Class**
+= installation
+
+The grip gem is hosted on gemcutter.org:
+
+* gem install grip
+
+
+= Usage
 
     class Foo
       include MongoMapper::Document
