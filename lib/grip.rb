@@ -65,14 +65,11 @@ module Grip
 
       if (opts[:file].is_a?(File) || opts[:file].is_a?(Tempfile))
         GridFS::GridStore.open(self.class.database, self["#{name}_path"], 'w', :content_type => self["#{name}_content_type"]) do |f|
-          f.write( grip_process_file(opts))
+          processed_or_not = self.respond_to?("process_#{name}") ? send("process_#{name}",opts) : opts[:file]
+          f.write(processed_or_not)
         end
       end
     end
-  end
-  
-  def grip_process_file opts
-    opts[:file]
   end
   
   def destroy_attached_files

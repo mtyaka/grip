@@ -22,7 +22,8 @@ The grip gem is hosted on gemcutter.org:
       # any specified options are passed back to you
       # at this point. 
       # Just return the file when you're done.
-      def grip_process_file opts
+      def process_image opts
+        puts "processing"
         opts[:file]
       end
     end

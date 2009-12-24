@@ -7,7 +7,7 @@ class Foo
   has_grid_attachment :image, :resize => {:width=>50,:height=>50}
   has_grid_attachment :pdf
   
-  def grip_process_file opts
+  def process_image opts
     opts[:file]
   end
 end
