@@ -44,8 +44,9 @@ module Grip
       end
       
       define_method("#{name}=") do |file|
+        raise Grip::InvalidFileException unless (file.is_a?(File) || file.is_a?(Tempfile))
         self['_id']                  = Mongo::ObjectID.new if _id.blank?
-        self["#{name}_size"]         = File.size(file)
+        self["#{name}_size"]         = File.size(file) 
         self["#{name}_name"]         = File.basename(file.path)
         self["#{name}_path"]         = "#{self.class.to_s.underscore}/#{name}/#{_id}"
         self["#{name}_content_type"] = file.content_type rescue MIME::Types.type_for(self["#{name}_name"]).to_s
@@ -58,16 +59,14 @@ module Grip
     end
   end
   
+  # Roll through attachment definitions and check if they are a File or Tempfile. Both types are 
+  # nescessary for file uploads to work properly. Each file checks for a <attr_name>_process
+  # callback for pre-processing before save.
   def save_attachments
-    self.class.attachment_definitions.each do |attachment|
-      
-      name, opts = attachment
-
-      if (opts[:file].is_a?(File) || opts[:file].is_a?(Tempfile))
-        GridFS::GridStore.open(self.class.database, self["#{name}_path"], 'w', :content_type => self["#{name}_content_type"]) do |f|
-          processed_or_not = self.respond_to?("process_#{name}") ? send("process_#{name}",opts) : opts[:file]
-          f.write(processed_or_not)
-        end
+    self.class.attachment_definitions.each do |definition|
+      attr_name, opts = definition
+      GridFS::GridStore.open(self.class.database, self["#{attr_name}_path"], 'w', :content_type => self["#{attr_name}_content_type"]) do |f|
+        f.write send("process_#{attr_name}",opts) rescue opts[:file]
       end
     end
   end
@@ -77,4 +76,8 @@ module Grip
       GridFS::GridStore.unlink(self.class.database, self["#{name}_path"])
     end
   end
+  
+  class Grip::InvalidFileException < Exception
+  end
+  
 end

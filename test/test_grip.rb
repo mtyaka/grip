@@ -79,4 +79,9 @@ class GripTest < Test::Unit::TestCase
     assert ! GridFS::GridStore.exist?(MongoMapper.database, @doc.image_path)
     assert ! GridFS::GridStore.exist?(MongoMapper.database, @doc.pdf_path)
   end
+  
+  test "should raise invalid file exception" do
+    assert_raise(Grip::InvalidFileException) {  @doc.image = ""; @doc.save! }
+  end
+  
 end
