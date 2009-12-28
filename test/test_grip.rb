@@ -4,7 +4,7 @@ class Foo
   include MongoMapper::Document
   include Grip
   
-  has_grid_attachment :image, :resize => {:width=>50,:height=>50}
+  has_grid_attachment :image, :versions => {:thumb => {:width=>50,:height=>50}}
   has_grid_attachment :pdf
   
   def process_image opts
@@ -38,9 +38,11 @@ class GripTest < Test::Unit::TestCase
     assert_equal 'sample.pdf',  @doc.pdf_name
     
     assert_equal "image/png",       @doc.image_content_type
+    assert_equal "image/png",       @doc.image_thumb_content_type
     assert_equal "application/pdf", @doc.pdf_content_type
     
     assert_equal "foo/image/#{@doc.id}", @doc.image_path
+    assert_equal "foo/image/thumb/#{@doc.id}", @doc.image_thumb_path
     assert_equal "foo/pdf/#{@doc.id}",   @doc.pdf_path
     
     collection = MongoMapper.database['fs.files']
@@ -51,7 +53,8 @@ class GripTest < Test::Unit::TestCase
   
   test "responds to dynamic keys" do
     [ :pdf_size, :pdf_path, :pdf_name, :pdf_content_type,
-      :image_size, :image_path, :image_name, :image_content_type
+      :image_size, :image_path, :image_name, :image_content_type,
+      :image_thumb_size, :image_thumb_path, :image_thumb_name, :image_thumb_content_type
     ].each do |method|
       assert @doc.respond_to?(method)
     end
@@ -77,6 +80,7 @@ class GripTest < Test::Unit::TestCase
     @doc.destroy
     
     assert ! GridFS::GridStore.exist?(MongoMapper.database, @doc.image_path)
+    assert ! GridFS::GridStore.exist?(MongoMapper.database, @doc.image_thumb_path)
     assert ! GridFS::GridStore.exist?(MongoMapper.database, @doc.pdf_path)
   end
   
