@@ -61,8 +61,6 @@ module Grip
           key "#{name}_#{v}_content_type".to_sym, String
           
           define_method("#{name}_#{v}") do
-            # open returns the correct mime-type, read returns a string. Not sure if 
-            # this is a GridFS problem or not
             GridFS::GridStore.open(self.class.database, self["#{name}_#{v}_path"], 'r') {|f| f }
           end
 
@@ -100,7 +98,7 @@ module Grip
         opts[:versions].each do |version,dimensions|
           tmp = Tempfile.new("#{attr_name}_#{version}")
           MojoMagick::resize(opts[:file].path, tmp.path, dimensions)
-          send "#{attr_name}_#{version}=", tmp
+          send("#{attr_name}_#{version}=", tmp)
           GridFS::GridStore.open(self.class.database, self["#{attr_name}_#{version}_path"], 'w', :content_type => self["#{attr_name}_content_type"]) do |f|
             f.write tmp.read
           end
