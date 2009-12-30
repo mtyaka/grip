@@ -42,7 +42,7 @@ class GripTest < Test::Unit::TestCase
     assert_equal "application/pdf", @doc.pdf_content_type
     
     assert_equal "foo/image/#{@doc.id}", @doc.image_path
-    assert_equal "foo/image/thumb/#{@doc.id}", @doc.image_thumb_path
+    assert_equal "foo/image_thumb/#{@doc.id}", @doc.image_thumb_path
     assert_equal "foo/pdf/#{@doc.id}",   @doc.pdf_path
     
     collection = MongoMapper.database['fs.files']

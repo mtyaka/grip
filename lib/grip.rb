@@ -3,21 +3,6 @@ require 'mime/types'
 require 'tempfile'
 require 'mojo_magick'
 
-# if thumbnailable?
-#   tmp = Tempfile.new("thumb_#{filename}")
-#   MojoMagick::resize(uploaded_file.path, tmp.path, {:width => 50, :height => 40, :scale => '>'})
-#   self.thumbnail = tmp.read      
-# end
-
-# open    : db, name, mode, options (:root, :metadata, :content_type)
-# read    : db, name, length, offset
-# unlink  : db, names
-# list    : db, root collection
-#
-# GridStore.open(database, 'filename', 'w') { |f|
-#   f.puts "Hello, world!"
-# }
-
 module Grip
   def self.included(base)
     base.extend Grip::ClassMethods
@@ -32,55 +17,59 @@ module Grip
       write_inheritable_attribute(:attachment_definitions, {}) if attachment_definitions.nil?
       attachment_definitions[name] = opts
       
-      key "#{name}_size".to_sym, Integer
-      key "#{name}_path".to_sym, String
-      key "#{name}_name".to_sym, String
-      key "#{name}_content_type".to_sym, String
+      build_attachment_keys_for name
       
       define_method(name) do
-        # open returns the correct mime-type, read returns a string. Not sure if 
-        # this is a GridFS problem or not
         GridFS::GridStore.open(self.class.database, self["#{name}_path"], 'r') {|f| f }
       end
       
       define_method("#{name}=") do |file|
-        raise Grip::InvalidFileException unless (file.is_a?(File) || file.is_a?(Tempfile))
-        self['_id']                  = Mongo::ObjectID.new if _id.blank?
-        self["#{name}_size"]         = File.size(file) 
-        self["#{name}_name"]         = File.basename(file.path)
-        self["#{name}_path"]         = "#{self.class.to_s.underscore}/#{name}/#{_id}"
-        self["#{name}_content_type"] = file.content_type rescue MIME::Types.type_for(self["#{name}_name"]).to_s
+        update_attachment_attributes!(name, file)
         self.class.attachment_definitions[name][:file] = file
       end
       
       unless opts[:versions].nil?
         opts[:versions].each do |v,dimensions|
-          key "#{name}_#{v}_size".to_sym, Integer
-          key "#{name}_#{v}_path".to_sym, String
-          key "#{name}_#{v}_name".to_sym, String
-          key "#{name}_#{v}_content_type".to_sym, String
+
+          version_name = "#{name}_#{v}"
+          build_attachment_keys_for version_name
           
-          define_method("#{name}_#{v}") do
-            GridFS::GridStore.open(self.class.database, self["#{name}_#{v}_path"], 'r') {|f| f }
+          define_method(version_name) do
+            GridFS::GridStore.open(self.class.database, self["#{version_name}_path"], 'r') {|f| f }
           end
 
-          define_method("#{name}_#{v}=") do |file|
-            raise Grip::InvalidFileException unless (file.is_a?(File) || file.is_a?(Tempfile))
-            self['_id']                  = Mongo::ObjectID.new if _id.blank?
-            self["#{name}_#{v}_size"]         = File.size(file) 
-            self["#{name}_#{v}_name"]         = File.basename(file.path)
-            self["#{name}_#{v}_path"]         = "#{self.class.to_s.underscore}/#{name}/#{v}/#{_id}"
-            
-            self["#{name}_#{v}_content_type"] = self["#{name}_content_type"]
+          define_method("#{version_name}=") do |file|
+            update_attachment_attributes!("#{version_name}", file, true)
+            self["#{version_name}_content_type"] = self["#{name}_content_type"]
           end
-          
         end
       end
-      
+    end
+    
+    def build_attachment_keys_for name
+      key "#{name}_size".to_sym, Integer
+      key "#{name}_path".to_sym, String
+      key "#{name}_name".to_sym, String
+      key "#{name}_content_type".to_sym, String
     end
     
     def attachment_definitions
       read_inheritable_attribute(:attachment_definitions)
+    end
+  end
+  
+  def update_attachment_attributes! name, file, is_version = false
+    raise Grip::InvalidFileException unless (file.is_a?(File) || file.is_a?(Tempfile))
+    
+    self["#{name}_size"]         = File.size(file) 
+    self["#{name}_name"]         = File.basename(file.path)
+    
+    unless is_version
+      self['_id']                  = Mongo::ObjectID.new if _id.blank?
+      self["#{name}_content_type"] = file.content_type rescue MIME::Types.type_for(self["#{name}_name"]).to_s
+      self["#{name}_path"]         = "#{self.class.to_s.underscore}/#{name}/#{_id}"
+    else
+      self["#{name}_path"]         = "#{self.class.to_s.underscore}/#{name}/#{_id}"
     end
   end
   
