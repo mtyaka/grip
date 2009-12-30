@@ -7,8 +7,8 @@ module Grip
   def self.included(base)
     base.extend Grip::ClassMethods
     base.class_eval do
-      after_save :save_attachments
-      before_destroy :destroy_attached_files
+      after_save      :save_attachments
+      before_destroy  :destroy_attached_files
     end
   end
   
@@ -79,6 +79,7 @@ module Grip
   def save_attachments
     self.class.attachment_definitions.each do |definition|
       attr_name, opts = definition
+      
       GridFS::GridStore.open(self.class.database, self["#{attr_name}_path"], 'w', :content_type => self["#{attr_name}_content_type"]) do |f|
         f.write send("process_#{attr_name}",opts) rescue opts[:file]
       end
