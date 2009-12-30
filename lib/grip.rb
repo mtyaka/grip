@@ -1,7 +1,7 @@
 require 'mongo/gridfs'
 require 'mime/types'
 require 'tempfile'
-require 'mojo_magick'
+require 'miso'
 
 module Grip
   def self.included(base)
@@ -59,7 +59,7 @@ module Grip
   end
   
   def update_attachment_attributes! name, file, is_version = false
-    raise Grip::InvalidFileException unless (file.is_a?(File) || file.is_a?(Tempfile))
+    raise Grip::InvalidFileException unless (file.is_a?(File) || file.is_a?(Tempfile) || file.is_a?(Miso::Image))
     
     self["#{name}_size"]         = File.size(file) 
     self["#{name}_name"]         = File.basename(file.path)
@@ -86,12 +86,22 @@ module Grip
       
       unless opts[:versions].nil?
         opts[:versions].each do |version,dimensions|
-          tmp = Tempfile.new("#{attr_name}_#{version}")
-          MojoMagick::resize(opts[:file].path, tmp.path, dimensions)
+          
+          tmp   = Tempfile.new("#{attr_name}_#{version}")
+          image = Miso::Image.new(opts[:file].path)
+          
+          image.crop(dimensions[:width], dimensions[:height])  if opts[:crop]
+          image.fit(dimensions[:width], dimensions[:height])   unless opts[:crop]
+          
+          image.write(tmp.path)
+          
+          # update <name>_<version> attrs and assign the file
           send("#{attr_name}_#{version}=", tmp)
+          
           GridFS::GridStore.open(self.class.database, self["#{attr_name}_#{version}_path"], 'w', :content_type => self["#{attr_name}_content_type"]) do |f|
             f.write tmp.read
           end
+          
         end
         save_to_collection
       end
