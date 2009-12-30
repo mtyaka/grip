@@ -6,7 +6,7 @@ GridFS attachments for MongoMapper
 
 The grip gem is hosted on gemcutter.org:
 
-* gem install grip
+    gem install miso grip
 
 
 = Usage
