@@ -81,7 +81,7 @@ module Grip
       attr_name, opts = definition
       
       GridFS::GridStore.open(self.class.database, self["#{attr_name}_path"], 'w', :content_type => self["#{attr_name}_content_type"]) do |f|
-        f.write send("process_#{attr_name}",opts) rescue opts[:file]
+        f.write opts[:file].read
       end
       
       unless opts[:versions].nil?
@@ -95,8 +95,7 @@ module Grip
         end
         save_to_collection
       end
-      
-    end
+    end unless self.class.attachment_definitions.nil?
   end
   
   def destroy_attached_files
@@ -107,7 +106,7 @@ module Grip
           GridFS::GridStore.unlink(self.class.database, self["#{name}_#{v}_path"])
         end
       end
-    end
+    end unless self.class.attachment_definitions.nil?
   end
   
   class Grip::InvalidFileException < Exception
