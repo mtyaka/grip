@@ -13,7 +13,7 @@ The grip gem is hosted on gemcutter.org:
 
     class Doc
       include MongoMapper::Document
-      include Grip
+      include MongoMapper::Grip::HasAttachment
 
       has_grid_attachment :image, :versions => {:thumb => {:width=>50,:height=>50}}
       
