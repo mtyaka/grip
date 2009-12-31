@@ -16,6 +16,7 @@ module MongoMapper
       key :variants,      Hash
       
       after_save :build_variants
+      before_destroy :destroy_file
       
       def file=new_file
         raise InvalidFile unless (new_file.is_a?(File) || new_file.is_a?(Tempfile))
@@ -68,6 +69,10 @@ module MongoMapper
             EOF
             
           end
+        end
+        
+        def destroy_file
+          GridFS::GridStore.unlink(self.class.database, grid_key)
         end
       
         def write_to_grid new_file

@@ -26,10 +26,6 @@ class HasAttachmentTest < Test::Unit::TestCase
       assert_equal(1, Doc.after_save.collect(&:method).count)
     end
     
-    should "have :before_destroy callback" do
-      assert_equal(1, Doc.before_destroy.collect(&:method).count)
-    end
-    
     context "when assigned a file" do
       setup do
         @document.image = @image

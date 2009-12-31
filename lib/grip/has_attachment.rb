@@ -30,8 +30,7 @@ module MongoMapper
       def self.included(base)
         base.extend ClassMethods
         base.class_eval do
-          after_save      :save_attachments
-          before_destroy  :destroy_attached_files
+          after_save :save_attachments
           
           many :attachments, :as => :owner, :class_name => "MongoMapper::Grip::Attachment", :dependent => :destroy
         end
