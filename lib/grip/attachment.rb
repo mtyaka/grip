@@ -1,8 +1,3 @@
-class Tempfile
-  def make_tmpname(basename, n)
-    sprintf('%s%d-%d', basename, $$, n)
-  end
-end
 module MongoMapper
   module Grip
     class Attachment
