@@ -9,7 +9,8 @@ module MongoMapper
       include MongoMapper::Document
 
       belongs_to :owner, :polymorphic => true
-
+      many :attached_variants, :as => :owner, :class_name => "MongoMapper::Grip::Attachment", :dependent => :destroy
+            
       key :owner_id,      ObjectId, :required => true
       key :owner_type,    String,   :required => true
 
@@ -18,8 +19,6 @@ module MongoMapper
       key :file_size,     Integer
       key :content_type,  String
       key :variants,      Hash
-      
-      key :variant_attachments, Array
       
       after_save :build_variants
       
@@ -61,13 +60,15 @@ module MongoMapper
               def #{variant}=(file_hash)
                 new_attachment  = Attachment.find_or_initialize_by_name_and_owner_id("#{variant.to_s}",self._id)
                 new_attachment.owner_type   = self.class.to_s
-                new_attachment.file         = file_hash[:tmp_file]
                 new_attachment.file_name    = File.basename(file_hash[:uploaded_file].path)
-                new_attachment.file_size    = File.size(file_hash[:tmp_file].path)
+                new_attachment.file_size    = File.size(file_hash[:resized_file].path)
                 new_attachment.content_type = MIME::Types.type_for(file_hash[:uploaded_file].path)
-                
-                puts new_attachment.grid_key
                 new_attachment.save!
+
+                GridFS::GridStore.open(self.class.database, new_attachment.grid_key, 'w', :content_type => new_attachment.content_type) do |f|
+                  f.write file_hash[:resized_file].read
+                end
+
               end
             EOF
             

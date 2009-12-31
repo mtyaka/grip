@@ -65,7 +65,7 @@ module MongoMapper
         
         image.write(tmp.path)
         
-        file_hash = {:tmp_file=>tmp,:uploaded_file=>tmp_file} 
+        file_hash = {:resized_file => tmp,:uploaded_file => tmp_file} 
         
         attachment.send("#{variant}=", file_hash)
       end

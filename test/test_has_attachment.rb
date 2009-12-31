@@ -48,8 +48,17 @@ class HasAttachmentTest < Test::Unit::TestCase
         assert @document.image.respond_to?( :thumb )
       end
       
-      should "have thumb variant" do
-        puts @document.image.thumb.inspect
+      should "have 2 variants" do
+        assert_equal(2, @document.image.attached_variants.count)
+      end
+      
+      should "be resized" do
+        assert @document.image.file_size > @document.image.thumb.file_size
+        assert @document.image.file_size > @document.image.super_thumb.file_size
+      end
+      
+      should "retrieve variants from grid" do
+        assert_equal "image/png", @file_system.find_one(:filename => @document.image.thumb.grid_key)['contentType']
       end
       
     end
