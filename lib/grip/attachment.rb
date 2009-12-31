@@ -14,6 +14,10 @@ module MongoMapper
       key :content_type,  String
       key :variants,      Hash
       
+      key :variant_attachments, Array
+      
+      after_save :build_variants
+      
       def file=new_file
         raise InvalidFile unless (new_file.is_a?(File) || new_file.is_a?(Tempfile))
         
@@ -32,7 +36,21 @@ module MongoMapper
         "#{owner_type.pluralize}/#{owner_id}/#{name}".downcase
       end
       
+      def self.create_method sym, &block
+        define_method sym do
+          yield
+        end
+      end
+      
       private
+        def build_variants
+          self.variants.each do |variant, dimensions|
+            self.class.create_method(variant) do
+              
+            end
+          end
+        end
+      
         def write_to_grid new_file
           GridFS::GridStore.open(self.class.database, grid_key, 'w', :content_type => content_type) do |f|
             f.write new_file.read
@@ -42,7 +60,6 @@ module MongoMapper
         def read_from_grid key
           GridFS::GridStore.open(self.class.database, key, 'r') { |f| f }
         end
-      
     end
   end
 end

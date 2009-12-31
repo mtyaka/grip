@@ -1,4 +1,4 @@
-%w{mongo/gridfs mime/types tempfile miso}.each { |lib| require lib }
+%w{mongo_mapper mongo/gridfs mime/types ftools tempfile rmagick miso}.each { |lib| require lib }
 
 module MongoMapper
   module Grip
