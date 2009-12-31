@@ -9,31 +9,39 @@ The grip gem is hosted on gemcutter.org:
     gem install miso grip
 
 
-= Usage
+= Usage (See tests for better docs)
 
-    class Foo
+    class Doc
       include MongoMapper::Document
       include Grip
 
       has_grid_attachment :image, :versions => {:thumb => {:width=>50,:height=>50}}
-      has_grid_attachment :pdf
       
-      # Hook for resizing or whatever gets you there.
-      # any specified options are passed back to you
-      # at this point. 
-      # Just return the file when you're done.
-      def process_image opts
-        puts "processing"
-        opts[:file]
-      end
     end
 
     image = File.open('foo.png', 'r')
-    pdf = File.open('foo.pdf', 'r')
-    foo = Foo.create(:image => image, :pdf => pdf)
+    @doc = Doc.create(:image => image)
 
-    foo.image # contents read from gridfs for serving from rack/metal/controller
-    foo.image_name # foo.jpg
-    foo.image_content_type # image/png
-    foo.image_size # File.size of the file
-    foo.image_path # path in grid fs foo/image/:id where :id is foo.id
+    puts @doc.image.name 
+    => "image"
+    puts @doc.image.file_size
+    => 100
+    puts @doc.image.file_name
+    => "foo.png"
+    puts @doc.image.grid_key
+    => "docs/<id>/image"
+    
+    # works on nested variants as well
+    
+    puts @doc.image.thumb.name 
+    => "thumb"
+    puts @doc.image.thumb.file_size
+    => 50
+    puts @doc.image.thumb.file_name
+    => "foo.png"
+    puts @doc.image.thumb.grid_key
+    => "attachments/<id>/thumb"
+    
+    
+    @doc.image.file # contents read from gridfs for serving from rack/metal/controller 
+
