@@ -35,12 +35,6 @@ module MongoMapper
         "#{owner_type.pluralize}/#{owner_id}/#{name}".downcase
       end
       
-      def self.create_method sym, &block
-        define_method sym do |*block.args|
-          yield
-        end
-      end
-      
       private
         def build_variants
           self.variants.each do |variant, dimensions|
