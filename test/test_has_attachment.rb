@@ -48,6 +48,10 @@ class HasAttachmentTest < Test::Unit::TestCase
         assert @document.image.respond_to?( :thumb )
       end
       
+      should "have thumb variant" do
+        puts @document.image.thumb.inspect
+      end
+      
     end
     
   end

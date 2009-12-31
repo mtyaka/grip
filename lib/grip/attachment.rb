@@ -1,3 +1,8 @@
+class Tempfile
+  def make_tmpname(basename, n)
+    sprintf('%s%d-%d', basename, $$, n)
+  end
+end
 module MongoMapper
   module Grip
     class Attachment
@@ -37,7 +42,7 @@ module MongoMapper
       end
       
       def self.create_method sym, &block
-        define_method sym do
+        define_method sym do |*block.args|
           yield
         end
       end
@@ -45,9 +50,27 @@ module MongoMapper
       private
         def build_variants
           self.variants.each do |variant, dimensions|
-            self.class.create_method(variant) do
-              
-            end
+            
+            eval <<-EOF
+              def #{variant}
+                Attachment.find_or_initialize_by_name_and_owner_id("#{variant.to_s}",self._id)
+              end
+            EOF
+            
+            eval <<-EOF
+              def #{variant}=(file_hash)
+                new_attachment  = Attachment.find_or_initialize_by_name_and_owner_id("#{variant.to_s}",self._id)
+                new_attachment.owner_type   = self.class.to_s
+                new_attachment.file         = file_hash[:tmp_file]
+                new_attachment.file_name    = File.basename(file_hash[:uploaded_file].path)
+                new_attachment.file_size    = File.size(file_hash[:tmp_file].path)
+                new_attachment.content_type = MIME::Types.type_for(file_hash[:uploaded_file].path)
+                
+                puts new_attachment.grid_key
+                new_attachment.save!
+              end
+            EOF
+            
           end
         end
       

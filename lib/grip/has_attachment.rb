@@ -50,8 +50,7 @@ module MongoMapper
       def save_attachments
         attachments.each do |attachment|
           attachment.variants.each do |variant,dimensions|
-            #puts "saving :: #{attachment.name}-#{variant}"
-            variant = create_variant(attachment,variant,dimensions)
+            create_variant(attachment,variant,dimensions)
           end
         end
       end
@@ -60,15 +59,15 @@ module MongoMapper
         tmp_file = self.class.uploaded_files[attachment.name.to_sym][:file]
         tmp   = Tempfile.new("#{attachment.name}_#{variant}")
         image = Miso::Image.new(tmp_file.path)
-        # 
-        # image.crop(dimensions[:width], dimensions[:height])  if opts[:crop]
-        # image.fit(dimensions[:width], dimensions[:height])   unless opts[:crop]
-        # 
-        # image.write(tmp.path)
-        # 
-        # GridFS::GridStore.open(self.class.database, self["#{attr_name}_#{version}_path"], 'w', :content_type => self["#{attr_name}_content_type"]) do |f|
-        #  f.write tmp.read
-        # end
+        
+        image.crop(dimensions[:width], dimensions[:height])  if dimensions[:crop]
+        image.fit(dimensions[:width], dimensions[:height])   unless dimensions[:crop]
+        
+        image.write(tmp.path)
+        
+        file_hash = {:tmp_file=>tmp,:uploaded_file=>tmp_file} 
+        
+        attachment.send("#{variant}=", file_hash)
       end
       
     end
