@@ -1,23 +1,23 @@
-require 'test/unit'
-require 'pp'
-
-require 'mongo_mapper'
-
+%w{test/unit shoulda factory_girl mongo_mapper}.each { |lib| require lib }
+require 'growler'
 require File.expand_path(File.dirname(__FILE__) + '/../lib/grip')
 
-MongoMapper.database = "test-attachments"
+TEST_DB = 'test-grip'
+
+MongoMapper.database = TEST_DB
 
 class Test::Unit::TestCase
-  def self.test(name, &block)
-    test_name = "test_#{name.gsub(/\s+/,'_')}".to_sym
-    defined = instance_method(test_name) rescue false
-    raise "#{test_name} is already defined in #{self}" if defined
-    if block_given?
-      define_method(test_name, &block)
-    else
-      define_method(test_name) do
-        flunk "No implementation provided for #{name}"
-      end
+  def teardown
+    MongoMapper.database.collections.each do |coll|
+      coll.remove  
+    end
+  end
+
+  # Make sure that each test case has a teardown
+  # method to clear the db after each test.
+  def inherited(base)
+    base.define_method teardown do 
+      super
     end
   end
 end
