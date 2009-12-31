@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{grip}
-  s.version = "0.5.1"
+  s.version = "0.6.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["twoism", "jnunemaker"]
-  s.date = %q{2009-12-30}
+  s.date = %q{2009-12-31}
   s.description = %q{GridFS attachments for MongoMapper}
   s.email = %q{signalstatic@gmail.com}
   s.extra_rdoc_files = [
@@ -17,16 +17,23 @@ Gem::Specification.new do |s|
      "README.rdoc"
   ]
   s.files = [
-    ".gitignore",
+    ".DS_Store",
+     ".gitignore",
      "LICENSE",
      "README.rdoc",
      "Rakefile",
      "VERSION",
      "grip.gemspec",
      "lib/grip.rb",
+     "lib/grip/attachment.rb",
+     "lib/grip/has_attachment.rb",
+     "test/factories.rb",
      "test/fixtures/cthulhu.png",
      "test/fixtures/sample.pdf",
-     "test/test_grip.rb",
+     "test/growler.rb",
+     "test/models.rb",
+     "test/test_grip_attachment.rb",
+     "test/test_has_attachment.rb",
      "test/test_helper.rb"
   ]
   s.homepage = %q{http://github.com/twoism/grip}
@@ -35,7 +42,11 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{GridFS attachments for MongoMapper}
   s.test_files = [
-    "test/test_grip.rb",
+    "test/factories.rb",
+     "test/growler.rb",
+     "test/models.rb",
+     "test/test_grip_attachment.rb",
+     "test/test_has_attachment.rb",
      "test/test_helper.rb"
   ]
 
