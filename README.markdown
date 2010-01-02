@@ -28,7 +28,7 @@ Then:
 Usage (See tests for better docs)
 ---------------------------------
 
-Create a MongoMapper model and `include MongoMapper::Grip::HasAttachment` and call `has_grid_attachment :<attachment_name>` to the model. Then if have attached an image, you can specify a hash of variants along with their :width & :height.
+Create a MongoMapper model and `include MongoMapper::Grip::HasAttachment` and call `has_grid_attachment :<attachment_name>` to the model. Then if your attachment is an image, you can specify a hash of variants along with their :width & :height.
 
 
     class Doc
