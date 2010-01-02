@@ -25,7 +25,7 @@ module MongoMapper
         self.file_size    = File.size(new_file.path)
         self.content_type = MIME::Types.type_for(new_file.path)
         
-        write_to_grid new_file
+        write_to_grid self,new_file
       end
       
       def file
@@ -58,9 +58,7 @@ module MongoMapper
               new_attachment.content_type = MIME::Types.type_for(file_hash[:uploaded_file].path)
               new_attachment.save!
 
-              GridFS::GridStore.open(self.class.database, new_attachment.grid_key, 'w', :content_type => new_attachment.content_type) do |f|
-                f.write file_hash[:resized_file].read
-              end
+              write_to_grid new_attachment, file_hash[:resized_file]
             end
           
           end
@@ -70,8 +68,8 @@ module MongoMapper
           GridFS::GridStore.unlink(self.class.database, grid_key)
         end
       
-        def write_to_grid new_file
-          GridFS::GridStore.open(self.class.database, grid_key, 'w', :content_type => content_type) do |f|
+        def write_to_grid attachment, new_file
+          GridFS::GridStore.open(self.class.database, attachment.grid_key, 'w', :content_type => attachment.content_type) do |f|
             f.write new_file.read
           end
         end
