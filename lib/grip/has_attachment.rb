@@ -56,13 +56,18 @@ module MongoMapper
       
       def create_variant attachment, variant, dimensions
         tmp_file = self.class.uploaded_files[attachment.name.to_sym][:file]
-        tmp   = Tempfile.new("#{attachment.name}_#{variant}")
-        image = Miso::Image.new(tmp_file.path)
+        begin 
+          tmp   = Tempfile.new("#{attachment.name}_#{variant}")
+          image = Miso::Image.new(tmp_file.path)
         
-        image.crop(dimensions[:width], dimensions[:height])  if dimensions[:crop]
-        image.fit(dimensions[:width], dimensions[:height])   unless dimensions[:crop]
+          image.crop(dimensions[:width], dimensions[:height])  if dimensions[:crop]
+          image.fit(dimensions[:width], dimensions[:height])   unless dimensions[:crop]
         
-        image.write(tmp.path)
+          image.write(tmp.path)
+        rescue RuntimeError => e
+          warn "Image was not resized. #{e}"
+          tmp = tmp_file
+        end
         
         file_hash = {:resized_file => tmp,:uploaded_file => tmp_file} 
         
