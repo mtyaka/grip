@@ -3,8 +3,13 @@ module MongoMapper
     class Attachment
       include MongoMapper::Document
 
-      belongs_to :owner, :polymorphic => true
-      many :attached_variants, :as => :owner, :class_name => "MongoMapper::Grip::Attachment", :dependent => :destroy
+      belongs_to  :owner, 
+                  :polymorphic => true
+                  
+      many  :attached_variants, 
+            :as => :owner, 
+            :class_name => "MongoMapper::Grip::Attachment", 
+            :dependent => :destroy
             
       key :owner_id,      ObjectId, :required => true
       key :owner_type,    String,   :required => true
@@ -15,8 +20,8 @@ module MongoMapper
       key :content_type,  String
       key :variants,      Hash
       
-      after_save :build_variants
-      before_destroy :destroy_file
+      after_save      :build_variants
+      before_destroy  :destroy_file
       
       def file=new_file
         raise InvalidFile unless (new_file.is_a?(File) || new_file.is_a?(Tempfile))
@@ -47,10 +52,11 @@ module MongoMapper
           self.variants.each do |variant, dimensions|
             
             self.class.create_method variant.to_sym do
-              Attachment.find_or_initialize_by_name_and_owner_id("#{variant.to_s}",self._id)
+              attached_variants.find_or_create_by_name(:name=>"#{variant.to_s}")
             end
             
             self.class.create_method "#{variant}=".to_sym do |file_hash|
+              
               new_attachment              = Attachment.find_or_initialize_by_name_and_owner_id("#{variant.to_s}",self._id)
               new_attachment.owner_type   = self.class.to_s
               new_attachment.file_name    = File.basename(file_hash[:uploaded_file].path)

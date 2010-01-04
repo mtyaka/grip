@@ -13,11 +13,11 @@ module MongoMapper
 
           define_method("#{name}=") do |new_file| 
             raise InvalidFile unless (new_file.is_a?(File) || new_file.is_a?(Tempfile))
-
-            self['_id']     = Mongo::ObjectID.new if _id.blank?
-            new_attachment  = Attachment.find_or_initialize_by_name_and_owner_id(name.to_s,self._id)
-            update_attachment_attributes!(new_attachment, new_file, opts)
+            
             self.class.uploaded_files[name][:file] = new_file
+            self['_id']     = Mongo::ObjectID.new if _id.blank?
+            new_attachment  = attachments.find_or_create_by_name(name.to_s)
+            update_attachment_attributes!(new_attachment, new_file, opts)
           end
                     
         end
@@ -31,8 +31,10 @@ module MongoMapper
         base.extend ClassMethods
         base.class_eval do
           after_save :save_attachments
-          
-          many :attachments, :as => :owner, :class_name => "MongoMapper::Grip::Attachment", :dependent => :destroy
+          many  :attachments, 
+                :as => :owner, 
+                :class_name => "MongoMapper::Grip::Attachment", 
+                :dependent => :destroy
         end
       end
       
@@ -70,7 +72,6 @@ module MongoMapper
         end
         
         file_hash = {:resized_file => tmp,:uploaded_file => tmp_file} 
-        
         attachment.send("#{variant}=", file_hash)
       end
       
