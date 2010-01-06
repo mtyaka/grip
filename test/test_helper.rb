@@ -1,3 +1,4 @@
+require 'rubygems'
 %w{test/unit shoulda factory_girl mongo_mapper factories}.each { |lib| require lib }
 require 'growler'
 require File.expand_path(File.dirname(__FILE__) + '/../lib/grip')
