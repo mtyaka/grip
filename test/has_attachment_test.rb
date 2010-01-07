@@ -1,6 +1,6 @@
 require "test_helper"
 require "models"
-include MongoMapper::Grip
+include Grip
 
 class HasAttachmentTest < Test::Unit::TestCase
   context "A Doc that has_grid_attachment :image" do
@@ -33,7 +33,7 @@ class HasAttachmentTest < Test::Unit::TestCase
       end
 
       should "should return an Attachment" do
-        assert_equal(MongoMapper::Grip::Attachment, @document.image.class)
+        assert_equal(Grip::Attachment, @document.image.class)
       end
       
       should "read file from grid store" do

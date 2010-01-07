@@ -12,6 +12,8 @@ begin
     g.email = 'signalstatic@gmail.com'
     g.homepage = 'http://github.com/twoism/grip'
     g.authors = %w(twoism jnunemaker)
+    g.add_dependency 'rmagick'
+    g.add_dependency 'miso'
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError

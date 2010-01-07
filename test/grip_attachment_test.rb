@@ -1,6 +1,6 @@
 require "test_helper"
 
-include MongoMapper::Grip
+include Grip
 
 class GripAttachmentTest < Test::Unit::TestCase
   context "An Attachment" do
