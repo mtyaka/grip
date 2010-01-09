@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{grip}
-  s.version = "0.6.3"
+  s.version = "0.6.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["twoism", "jnunemaker"]
-  s.date = %q{2010-01-07}
+  s.date = %q{2010-01-09}
   s.description = %q{GridFS attachments for MongoMapper}
   s.email = %q{signalstatic@gmail.com}
   s.extra_rdoc_files = [
@@ -17,8 +17,7 @@ Gem::Specification.new do |s|
      "README.markdown"
   ]
   s.files = [
-    ".DS_Store",
-     ".gitignore",
+    ".gitignore",
      "LICENSE",
      "README.markdown",
      "Rakefile",
@@ -29,6 +28,7 @@ Gem::Specification.new do |s|
      "lib/grip/has_attachment.rb",
      "test/factories.rb",
      "test/fixtures/cthulhu.png",
+     "test/fixtures/fennec-fox.jpg",
      "test/fixtures/sample.pdf",
      "test/grip_attachment_test.rb",
      "test/growler.rb",
