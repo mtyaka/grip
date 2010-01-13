@@ -80,7 +80,7 @@ module Grip
       end
       
       def read_from_grid key
-        GridFS::GridStore.open(self.class.database, key, 'r') { |f| f }
+        GridFS::GridStore.new(self.class.database, key, 'r')
       end
   end
 end
