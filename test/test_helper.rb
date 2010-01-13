@@ -1,7 +1,9 @@
+$:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'rubygems'
-%w{test/unit shoulda factory_girl mongo_mapper factories}.each { |lib| require lib }
+require 'grip'
 require 'growler'
-require File.expand_path(File.dirname(__FILE__) + '/../lib/grip')
+%w{test/unit shoulda factory_girl mongo_mapper factories}.each { |lib| require lib }
+
 
 TEST_DB = 'test-grip'
 
