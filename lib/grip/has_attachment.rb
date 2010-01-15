@@ -4,7 +4,6 @@ module Grip
    def self.included(base)
      base.extend ClassMethods
      base.instance_eval do
-       after_save :save_attachments
        many  :attachments, 
              :as => :owner, 
              :class_name => "Grip::Attachment", 
@@ -15,12 +14,16 @@ module Grip
     module ClassMethods
       
       def has_grid_attachment name, opts={}
+        set_callbacks_once
+        
         write_inheritable_attribute(:uploaded_file_options, {}) if uploaded_file_options.nil?
         uploaded_file_options[name] = opts
         self.send(:include, InstanceMethods)
+        
         define_method(name) do
           attachments.find(:first, :conditions=>{:name => name.to_s})
         end
+        
         define_method("#{name}=") do |new_file|
           raise InvalidFile unless (new_file.is_a?(File) || new_file.is_a?(Tempfile))
           uploaded_files[name] ||= {}
@@ -30,6 +33,10 @@ module Grip
           update_attachment_attributes!(new_attachment, new_file, opts)
         end
                   
+      end
+      
+      def set_callbacks_once
+        after_save :save_attachments unless after_save.collect(&:method).include?(:save_attachments)
       end
       
       def uploaded_file_options
