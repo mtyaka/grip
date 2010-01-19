@@ -33,7 +33,7 @@ Create a MongoMapper model and `include MongoMapper::Grip::HasAttachment` and ca
 
     class Doc
       include MongoMapper::Document
-      include MongoMapper::Grip::HasAttachment
+      include Grip::HasAttachment
       has_grid_attachment :image, :variants => {:thumb => {:width=>50,:height=>50}}
     end
     
