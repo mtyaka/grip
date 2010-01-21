@@ -1,10 +1,24 @@
-%w{mongo_mapper mongo/gridfs mime/types ftools tempfile RMagick miso}.each { |lib| require lib }
+if RUBY_VERSION =~ /1.9.[0-9]/
+  require 'fileutils'
+else
+  require 'ftools'
+end
+
+require 'mongo_mapper'
+require 'mongo/gridfs'
+require 'mime/types'
+require 'tempfile'
+require 'RMagick'
+require 'miso'
 
 module MongoMapper
   module Grip
-    class GripError < StandardError;  end
-    class InvalidFile < GripError;  end
+    class GripError < StandardError;
+    end
+    class InvalidFile < GripError;
+    end
   end
 end
 
-%w{grip/attachment grip/has_attachment}.each { |lib| require lib }
+require 'grip/attachment'
+require 'grip/has_attachment'
