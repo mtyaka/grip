@@ -48,6 +48,11 @@ class HasAttachmentTest < Test::Unit::TestCase
         assert @document.image.respond_to?( :thumb )
       end
 
+      should "have the correct name for each variant" do
+        assert_equal "thumb", @document.image.thumb.name
+        assert_equal "super_thumb", @document.image.super_thumb.name
+      end
+
       should "have 2 variants" do
         assert_equal(2, @document.image.attached_variants.count)
       end
