@@ -54,7 +54,7 @@ module Grip
         new_attachment.owner_type   = self.class.to_s
         new_attachment.file_name    = File.basename(new_file.path)
         new_attachment.file_size    = File.size(new_file.path)
-        new_attachment.content_type = MIME::Types.type_for(new_file.path)
+        new_attachment.content_type = MIME::Types.type_for(new_file.path)[0].content_type
         new_attachment.file         = new_file
         new_attachment.variants     = opts[:variants] || {}
         new_attachment.save!
