@@ -25,7 +25,7 @@ module Grip
     def file=new_file
       raise InvalidFile unless (new_file.is_a?(File) || new_file.is_a?(Tempfile))
       
-      self.file_name    = File.basename(new_file.path)
+      self.file_name    = new_file.is_a?(Tempfile) ? new_file.original_filename : File.basename(new_file.path)
       self.file_size    = File.size(new_file.path)
       self.content_type = MIME::Types.type_for(new_file.path)
       
