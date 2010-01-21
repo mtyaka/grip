@@ -51,7 +51,7 @@ module Grip
       self.variants.each do |variant, dimensions|
 
         self.class.create_method variant.to_sym do
-          attached_variants.find_or_create_by_name(:name=>"#{variant.to_s}")
+          attached_variants.find_or_create_by_name("#{variant.to_s}")
         end
 
         self.class.create_method "#{variant}=".to_sym do |file_hash|
