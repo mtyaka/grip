@@ -11,12 +11,10 @@ require 'tempfile'
 require 'RMagick'
 require 'miso'
 
-module MongoMapper
-  module Grip
-    class GripError < StandardError;
-    end
-    class InvalidFile < GripError;
-    end
+module Grip
+  class GripError < StandardError;
+  end
+  class InvalidFile < GripError;
   end
 end
 

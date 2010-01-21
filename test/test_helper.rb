@@ -1,5 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../lib/grip')
+$:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
+require 'grip'
 require 'test/unit'
 require 'shoulda'
 require 'factory_girl'

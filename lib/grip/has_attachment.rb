@@ -1,42 +1,53 @@
-module MongoMapper
-  module Grip
-    module HasAttachment
-      module ClassMethods
+module Grip
+  module HasAttachment
 
-        def has_grid_attachment name, opts={}
-          write_inheritable_attribute(:uploaded_files, {}) if uploaded_files.nil?
-          uploaded_files[name] = opts
+    def self.included(base)
+      base.extend ClassMethods
+      base.instance_eval do
+        many  :attachments,
+              :as => :owner,
+              :class_name => "Grip::Attachment",
+              :dependent => :destroy
+      end
+    end
 
-          define_method(name) do
-            attachments.find(:first, :conditions=>{:name=>name.to_s})
-          end
+    module ClassMethods
 
-          define_method("#{name}=") do |new_file|
-            raise InvalidFile unless (new_file.is_a?(File) || new_file.is_a?(Tempfile))
+      def has_grid_attachment name, opts={}
+        set_callbacks_once
 
-            self.class.uploaded_files[name][:file] = new_file
-            self['_id']     = Mongo::ObjectID.new if _id.blank?
-            new_attachment  = attachments.find_or_create_by_name(name.to_s)
-            update_attachment_attributes!(new_attachment, new_file, opts)
-          end
+        write_inheritable_attribute(:uploaded_file_options, {}) if uploaded_file_options.nil?
+        uploaded_file_options[name] = opts
+        self.send(:include, InstanceMethods)
 
+        define_method(name) do
+          attachments.find(:first, :conditions=>{:name => name.to_s})
         end
 
-        def uploaded_files
-          read_inheritable_attribute(:uploaded_files)
+        define_method("#{name}=") do |new_file|
+          raise InvalidFile unless (new_file.is_a?(File) || new_file.is_a?(Tempfile))
+          uploaded_files[name] ||= {}
+          uploaded_files[name][:file] = new_file
+          self['_id'] = Mongo::ObjectID.new if _id.blank?
+          new_attachment = attachments.find_or_create_by_name(name.to_s)
+          update_attachment_attributes!(new_attachment, new_file, opts)
         end
 
       end
 
-      def self.included(base)
-        base.extend ClassMethods
-        base.class_eval do
-          after_save :save_attachments
-          many  :attachments,
-                :as => :owner,
-                :class_name => "MongoMapper::Grip::Attachment",
-                :dependent => :destroy
-        end
+      def set_callbacks_once
+        after_save :save_attachments unless after_save.collect(&:method).include?(:save_attachments)
+      end
+
+      def uploaded_file_options
+        read_inheritable_attribute(:uploaded_file_options)
+      end
+
+    end
+
+    module InstanceMethods
+      def uploaded_files
+        @uploaded_files ||= {}
       end
 
       def update_attachment_attributes! new_attachment, new_file, opts
@@ -58,7 +69,7 @@ module MongoMapper
       end
 
       def create_variant attachment, variant, dimensions
-        tmp_file = self.class.uploaded_files[attachment.name.to_sym][:file]
+        tmp_file = uploaded_files[attachment.name.to_sym][:file]
         begin
           tmp   = Tempfile.new("#{attachment.name}_#{variant}")
           image = Miso::Image.new(tmp_file.path)
@@ -77,5 +88,7 @@ module MongoMapper
       end
 
     end
+
+
   end
 end
