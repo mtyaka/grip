@@ -37,7 +37,7 @@ module Grip
     end
 
     def grid_key
-      "#{owner_type.pluralize}/#{owner_id}/#{name}".downcase
+      "#{owner_type.pluralize}/#{owner_id}/#{name}/#{file_name}".downcase
     end
 
     def self.create_method method_name, &block
