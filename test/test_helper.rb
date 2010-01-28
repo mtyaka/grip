@@ -5,6 +5,7 @@ require 'test/unit'
 require 'shoulda'
 require 'factory_girl'
 require 'factories'
+require 'RMagick'
 
 TEST_DB = 'test-grip'
 

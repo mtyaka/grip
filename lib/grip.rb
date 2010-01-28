@@ -8,7 +8,6 @@ require 'mongo_mapper'
 require 'mongo/gridfs'
 require 'mime/types'
 require 'tempfile'
-require 'RMagick'
 require 'miso'
 
 module Grip
