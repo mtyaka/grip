@@ -13,7 +13,6 @@ Jeweler::Tasks.new do |gem|
   gem.authors = %w(twoism jnunemaker)
 
   gem.add_dependency('mongo_mapper', '>= 0.6.10')
-  gem.add_dependency('rmagick', '>= 2.12.2')
   gem.add_dependency('miso', '>= 0.3.1')
 
   gem.add_development_dependency('factory_girl', '1.2.3')

@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{grip}
-  s.version = "0.6.11"
+  s.version = "0.6.12"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["twoism", "jnunemaker"]
-  s.date = %q{2010-01-28}
+  s.date = %q{2010-01-31}
   s.description = %q{GridFS attachments for MongoMapper}
   s.email = %q{signalstatic@gmail.com}
   s.extra_rdoc_files = [
@@ -54,20 +54,17 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<mongo_mapper>, [">= 0.6.10"])
-      s.add_runtime_dependency(%q<rmagick>, [">= 2.12.2"])
       s.add_runtime_dependency(%q<miso>, [">= 0.3.1"])
       s.add_development_dependency(%q<factory_girl>, ["= 1.2.3"])
       s.add_development_dependency(%q<shoulda>, ["= 2.10.2"])
     else
       s.add_dependency(%q<mongo_mapper>, [">= 0.6.10"])
-      s.add_dependency(%q<rmagick>, [">= 2.12.2"])
       s.add_dependency(%q<miso>, [">= 0.3.1"])
       s.add_dependency(%q<factory_girl>, ["= 1.2.3"])
       s.add_dependency(%q<shoulda>, ["= 2.10.2"])
     end
   else
     s.add_dependency(%q<mongo_mapper>, [">= 0.6.10"])
-    s.add_dependency(%q<rmagick>, [">= 2.12.2"])
     s.add_dependency(%q<miso>, [">= 0.3.1"])
     s.add_dependency(%q<factory_girl>, ["= 1.2.3"])
     s.add_dependency(%q<shoulda>, ["= 2.10.2"])
